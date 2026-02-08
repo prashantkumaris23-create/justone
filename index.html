@@ -90,7 +90,9 @@ button {
 
 /* 💍 Proposal Scene */
 .scene { position: relative; height: 280px; margin-top: 30px; }
+
 .boy, .girl { position: absolute; bottom: 0; }
+
 .boy { left: 28%; animation: kneel 2s forwards; }
 
 .boy .head, .girl .head {
@@ -127,7 +129,7 @@ button {
 <div class="stars"></div>
 
 <!-- 🎵 Romantic Music -->
-<audio id="bgMusic" loop preload="auto">
+<audio id="bgMusic" loop>
     <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5a6b6e8f6c.mp3" type="audio/mpeg">
 </audio>
 
@@ -156,19 +158,15 @@ button {
 
 <script>
 let yesSize = 20, noClicks = 0;
-let musicStarted = false;
 
-/* YES grows, NO fades */
 function growYes() {
-    yesSize += 12;
-    noClicks++;
+    yesSize += 12; noClicks++;
     yesBtn.style.fontSize = yesSize + "px";
     yesBtn.style.padding = yesSize / 2 + "px";
     noBtn.style.opacity = 1 - noClicks * 0.2;
     if (noClicks >= 5) noBtn.classList.add("hidden");
 }
 
-/* ✨ Sparkles */
 function createSparkles() {
     for (let i = 0; i < 8; i++) {
         const s = document.createElement("span");
@@ -182,25 +180,9 @@ function createSparkles() {
     }
 }
 
-/* 🎵 Fade-in Music */
-function startMusic() {
-    if (musicStarted) return;
-    musicStarted = true;
-
-    const music = bgMusic;
-    music.volume = 0;
-    music.play();
-
-    let vol = 0;
-    const fade = setInterval(() => {
-        vol += 0.05;
-        music.volume = Math.min(vol, 0.6); // 🔊 audible level
-        if (vol >= 0.6) clearInterval(fade);
-    }, 200);
-}
-
 function yesChosen() {
-    startMusic();
+    bgMusic.volume = 0.25;
+    bgMusic.play();
     createSparkles();
     question.classList.add("hidden");
     afterYes.classList.remove("hidden");
@@ -209,6 +191,107 @@ function yesChosen() {
 function showGifts() {
     afterYes.classList.add("hidden");
     gifts.classList.remove("hidden");
+}
+
+/* 💌 GIFT 1 */
+const questions = [
+{q:"What makes you feel most loved on Valentine’s Day?",o:["A surprise hug 🤗","A handwritten love note 💌","Whole day together 💑","All of the above 😍"]},
+{q:"Perfect Valentine’s date?",o:["Candlelight dinner 🌹","Late-night walk 🌙","Movie cuddle 🎬","Anywhere with you ❤️"]},
+{q:"Most romantic thing I could say?",o:["You’re my favorite thought 💭","My world is better with you 🌍","I choose you 💖","All of these 😘"]},
+{q:"Describe us in one word?",o:["Magical ✨","Unforgettable 💞","Forever ♾️","Our love story 📖"]},
+{q:"If I asked you to be my Valentine?",o:["Yes ❤️","Definitely yes 💕","Of course 😄","Why so late? 😘"]}
+];
+let currentQ = 0;
+
+function gift1(){ currentQ=0; showQuestion(); }
+
+function showQuestion(){
+    let q=questions[currentQ];
+    let opts=q.o.map(o=>`<label class="option"><input type="radio" name="opt"> ${o}</label>`).join("");
+    show(`
+    <div class="card">
+        <h2>💌 Question ${currentQ+1}/5</h2>
+        <p><strong>${q.q}</strong></p>
+        ${opts}
+        <button onclick="nextQuestion()">Next ➜</button>
+    </div>`);
+}
+
+function nextQuestion(){
+    if(!document.querySelector('input[name="opt"]:checked')){
+        alert("Choose one option 😌💘"); return;
+    }
+    currentQ++;
+    if(currentQ<questions.length) showQuestion();
+    else show(`<div class="card" style="text-align:center;">
+        <h2>💖 Perfect Answers</h2>
+        <button onclick="gift2()">Next Gift ➜</button>
+    </div>`);
+}
+
+/* ❤️ GIFT 2 – UPDATED LOVE NOTE */
+function gift2(){
+    show(`
+    <div class="card">
+        <h2>❤️ A Little Love Note</h2>
+
+        <p><strong>Hey you, my baby girl,</strong></p>
+
+        <p>
+        I tried to write something romantic… but then you showed up in my thoughts
+        and completely ruined my focus. Honestly, you should take responsibility
+        for being this distracting 😌.
+        </p>
+
+        <p>
+        Being with you feels like my favorite addiction—one I have zero intention
+        of quitting. If loving you were a habit, I’d be happily obsessed.
+        </p>
+
+        <p>
+        And your smile? Unfair. Absolutely illegal. It should come with a warning
+        because the way it makes my heart race every single time is dangerous.
+        You have this effortless power to turn my worst days soft,
+        my best days unforgettable, and my jokes… okay, still questionable—
+        but you laugh, so I win 😄.
+        </p>
+
+        <p>
+        Loving you feels natural, easy, and way too tempting.
+        You make me want more—more moments, more laughs, more you.
+        So yes… I’m falling for you. Slowly, deeply, and with zero resistance.
+        And I’m blaming you for every heartbeat you’ve stolen along the way.
+        </p>
+
+        <p><strong>
+        Yours (like, obviously and proudly),<br>
+        Prashant 💘
+        </strong></p>
+
+        <div style="text-align:center;">
+            <button onclick="gift3()">Next Gift ➜</button>
+        </div>
+    </div>`);
+}
+
+/* 💐 GIFT 3 */
+function gift3(){
+    show(`<div class="card" style="text-align:center;">
+        <h2>💖 A Moment Just for Us</h2>
+        <div class="scene">
+            <div class="boy"><div class="head"><div class="hair"></div></div><div class="body"></div><div class="legs"></div></div>
+            <div class="flower">💐</div>
+            <div class="girl"><div class="head"><div class="hair"></div></div><div class="dress"></div></div>
+            <div class="heart" style="left:45%;top:20px;">❤️</div>
+            <div class="heart" style="left:55%;top:30px;">❤️</div>
+        </div>
+    </div>`);
+}
+
+function show(html){
+    gifts.classList.add("hidden");
+    content.innerHTML=html;
+    content.classList.remove("hidden");
 }
 </script>
 
