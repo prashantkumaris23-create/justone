@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Will You Be My Valentine?</title>
 
 <style>
@@ -30,15 +31,19 @@ body {
     height: 2px;
     background: white;
     box-shadow:
-        50px 100px white, 200px 300px white, 400px 150px white,
-        600px 400px white, 800px 250px white, 1000px 100px white,
-        1200px 350px white, 300px 500px white, 700px 600px white,
-        900px 450px white;
+        5vw 10vh white,
+        20vw 30vh white,
+        40vw 15vh white,
+        60vw 40vh white,
+        80vw 25vh white,
+        90vw 10vh white,
+        30vw 50vh white,
+        70vw 60vh white;
     animation: twinkle 3s infinite alternate;
 }
 @keyframes twinkle { from {opacity:.3;} to {opacity:1;} }
 
-.container { padding-top: 60px; }
+.container { padding: 50px 16px 20px; }
 
 button {
     padding: 14px 28px;
@@ -50,10 +55,17 @@ button {
     transition: all 0.3s ease;
 }
 
-#yesBtn {
-    background: #2ecc71;
-    position: relative;
+/* 📱 Mobile buttons */
+@media (max-width: 600px) {
+    button {
+        width: 100%;
+        max-width: 320px;
+        font-size: 16px;
+        margin: 10px auto;
+    }
 }
+
+#yesBtn { background: #2ecc71; position: relative; }
 #noBtn { background: #e74c3c; }
 
 .hidden { display: none; }
@@ -61,15 +73,16 @@ button {
 .card {
     background: rgba(255,255,255,0.2);
     backdrop-filter: blur(6px);
-    padding: 25px;
+    padding: 22px;
     border-radius: 15px;
-    margin: 20px auto;
-    width: 90%;
+    margin: 16px auto;
+    width: 100%;
     max-width: 560px;
     text-align: left;
+    box-sizing: border-box;
 }
 
-.option { display: block; margin: 10px 0; }
+.option { display: block; margin: 12px 0; }
 
 /* ✨ Sparkles */
 .sparkle {
@@ -91,36 +104,57 @@ button {
 /* 💍 Proposal Scene */
 .scene { position: relative; height: 280px; margin-top: 30px; }
 
+/* 📱 Scale proposal on mobile */
+@media (max-width: 600px) {
+    .scene { height: 220px; transform: scale(0.9); }
+}
+
 .boy, .girl { position: absolute; bottom: 0; }
 
-.boy { left: 28%; animation: kneel 2s forwards; }
+.boy { left: 25%; animation: kneel 2s forwards; }
+.girl { right: 25%; }
 
 .boy .head, .girl .head {
-    width: 36px; height: 36px; background: #f1c27d;
-    border-radius: 50%; margin: auto; position: relative;
+    width: 36px;
+    height: 36px;
+    background: #f1c27d;
+    border-radius: 50%;
+    margin: auto;
+    position: relative;
 }
+
 .boy .hair {
-    width: 36px; height: 18px; background: #2c3e50;
-    border-radius: 18px 18px 0 0; position: absolute; top: 0;
+    width: 36px;
+    height: 18px;
+    background: #2c3e50;
+    border-radius: 18px 18px 0 0;
+    position: absolute;
+    top: 0;
 }
+
 .boy .body { width: 42px; height: 60px; background: #2980b9; border-radius: 8px; margin: auto; }
 .boy .legs { width: 42px; height: 28px; background: #34495e; border-radius: 0 0 8px 8px; margin: auto; }
 
-.girl { right: 28%; }
 .girl .hair {
-    width: 42px; height: 22px; background: #6f4e37;
-    border-radius: 20px; position: absolute; top: -5px; left: -3px;
+    width: 42px;
+    height: 22px;
+    background: #6f4e37;
+    border-radius: 20px;
+    position: absolute;
+    top: -5px;
+    left: -3px;
 }
+
 .girl .dress { width: 48px; height: 85px; background: #ff69b4; border-radius: 12px; margin: auto; }
 
-.flower { position: absolute; left: 47%; top: 145px; font-size: 26px; }
-.heart { position: absolute; font-size: 20px; animation: float 3s infinite; }
+.flower { position: absolute; left: 50%; transform: translateX(-50%); top: 140px; font-size: 24px; }
+.heart { position: absolute; font-size: 18px; animation: float 3s infinite; }
 
-@keyframes kneel { 100% { transform: translateY(15px); } }
+@keyframes kneel { 100% { transform: translateY(12px); } }
 @keyframes float {
     0% { opacity: 0; transform: translateY(20px); }
     50% { opacity: 1; }
-    100% { opacity: 0; transform: translateY(-40px); }
+    100% { opacity: 0; transform: translateY(-30px); }
 }
 </style>
 </head>
@@ -129,7 +163,7 @@ button {
 <div class="stars"></div>
 
 <!-- 🎵 Romantic Music -->
-<audio id="bgMusic" loop>
+<audio id="bgMusic" loop preload="auto">
     <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_5a6b6e8f6c.mp3" type="audio/mpeg">
 </audio>
 
@@ -157,31 +191,32 @@ button {
 <div class="container hidden" id="content"></div>
 
 <script>
-let yesSize = 20, noClicks = 0;
+let yesSize = window.innerWidth < 600 ? 16 : 20;
+let noClicks = 0;
 
 function growYes() {
-    yesSize += 12; noClicks++;
+    yesSize += window.innerWidth < 600 ? 6 : 12;
+    noClicks++;
     yesBtn.style.fontSize = yesSize + "px";
-    yesBtn.style.padding = yesSize / 2 + "px";
     noBtn.style.opacity = 1 - noClicks * 0.2;
-    if (noClicks >= 5) noBtn.classList.add("hidden");
+    if (noClicks >= 4) noBtn.classList.add("hidden");
 }
 
 function createSparkles() {
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 6; i++) {
         const s = document.createElement("span");
         s.className = "sparkle";
         s.style.left = "50%";
         s.style.top = "50%";
-        s.style.setProperty("--x", `${Math.random()*60-30}px`);
-        s.style.setProperty("--y", `${Math.random()*60-30}px`);
+        s.style.setProperty("--x", `${Math.random()*40-20}px`);
+        s.style.setProperty("--y", `${Math.random()*40-20}px`);
         yesBtn.appendChild(s);
         setTimeout(() => s.remove(), 1200);
     }
 }
 
 function yesChosen() {
-    bgMusic.volume = 0.25;
+    bgMusic.volume = 0.6;
     bgMusic.play();
     createSparkles();
     question.classList.add("hidden");
@@ -193,7 +228,7 @@ function showGifts() {
     gifts.classList.remove("hidden");
 }
 
-/* 💌 GIFT 1 */
+/* 💌 GIFT 1 — QUESTIONS (UNCHANGED) */
 const questions = [
 {q:"What makes you feel most loved on Valentine’s Day?",o:["A surprise hug 🤗","A handwritten love note 💌","Whole day together 💑","All of the above 😍"]},
 {q:"Perfect Valentine’s date?",o:["Candlelight dinner 🌹","Late-night walk 🌙","Movie cuddle 🎬","Anywhere with you ❤️"]},
@@ -203,11 +238,11 @@ const questions = [
 ];
 let currentQ = 0;
 
-function gift1(){ currentQ=0; showQuestion(); }
+function gift1(){ currentQ = 0; showQuestion(); }
 
 function showQuestion(){
-    let q=questions[currentQ];
-    let opts=q.o.map(o=>`<label class="option"><input type="radio" name="opt"> ${o}</label>`).join("");
+    let q = questions[currentQ];
+    let opts = q.o.map(o => `<label class="option"><input type="radio" name="opt"> ${o}</label>`).join("");
     show(`
     <div class="card">
         <h2>💌 Question ${currentQ+1}/5</h2>
@@ -222,14 +257,14 @@ function nextQuestion(){
         alert("Choose one option 😌💘"); return;
     }
     currentQ++;
-    if(currentQ<questions.length) showQuestion();
+    if(currentQ < questions.length) showQuestion();
     else show(`<div class="card" style="text-align:center;">
         <h2>💖 Perfect Answers</h2>
         <button onclick="gift2()">Next Gift ➜</button>
     </div>`);
 }
 
-/* ❤️ GIFT 2 – UPDATED LOVE NOTE */
+/* ❤️ GIFT 2 — LOVE NOTE (UNCHANGED) */
 function gift2(){
     show(`
     <div class="card">
@@ -264,7 +299,7 @@ function gift2(){
         </p>
 
         <p><strong>
-        Yours (like, obviously and proudly),<br>
+        Yours lovely,<br>
         Prashant 💘
         </strong></p>
 
@@ -274,7 +309,7 @@ function gift2(){
     </div>`);
 }
 
-/* 💐 GIFT 3 */
+/* 💐 GIFT 3 — PROPOSAL (UNCHANGED) */
 function gift3(){
     show(`<div class="card" style="text-align:center;">
         <h2>💖 A Moment Just for Us</h2>
@@ -290,7 +325,7 @@ function gift3(){
 
 function show(html){
     gifts.classList.add("hidden");
-    content.innerHTML=html;
+    content.innerHTML = html;
     content.classList.remove("hidden");
 }
 </script>
